@@ -2,10 +2,21 @@
 
 <br>
 
-## Goal of Scene Builder
+## Goal
 ### Provide an easy option for anyone to make a custom scene for the 3D caves  
-#### A lot of staff have requested for customizable background environments  
-#### Unity is one method of making scenes for the 3D caves, but it is not very beginner friendly. A web-based environment to create scenes makes it quicker, easier, and more accessible for users to create their own custom scene. 
+#### The staff have requested for customizable background environments  
+#### Unity is one method of making scenes for the 3D caves, but it is not very beginner friendly. A web-based environment to create scenes is quicker, easier, and makes it more accessible for anyone to create their own custom scene. 
+
+#### The user will be able to: 
+- select a background image to simulate an environment
+    + hospital room
+    + home visit
+    + outdoors
+- bring in other images to layer on top of the background
+    + medical equipment
+    + interactable objects
+- save custom scenes and load them back up
+
 
 
 <br><br><br>
@@ -18,25 +29,21 @@
 
 ## Technologies
 
-#### - `three.js`
-
-#### I'm using three.js to create the customizable scene
-
-#### 64:10 aspect ratio so it can span across the four walls of the 3D caves
+#### `three.js` is used to create the customizable scene. The scene has a 64:10 aspect ratio allowing it to span across all four walls of the 3D caves
 
 <br><br><br>
 
 ## Challenges
 
 #### ⚠️ Formating the webpage  
-#### ⚠️ Testing requires going to the caves
+#### ⚠️ Proper testing requires being inside the 3D caves
 
 
 <br><br><br>
 
 ## Project Status
 
-#### ✅ Scalable webpage + GitHub  
+#### ✅ Resizable webpage + GitHub  
 #### ✅ three.js scene
 #### ✅ Mouse viewport tracking
 #### 🔶 GUI with images  
