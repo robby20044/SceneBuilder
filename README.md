@@ -5,7 +5,7 @@
 ## Goal of Scene Builder
 ### Provide an easy option for anyone to make a custom scene for the 3D caves  
 #### A lot of staff have requested for customizable background environments  
-#### Unity is one method of making scenes for the 3D caves, but it is not very beginner friendly. A web-based environment to create scenes makes it simpler for the user and more accessible for others to make their own scenes. 
+#### Unity is one method of making scenes for the 3D caves, but it is not very beginner friendly. A web-based environment to create scenes makes it quicker, easier, and more accessible for users to create their own custom scene. 
 
 
 <br><br><br>
