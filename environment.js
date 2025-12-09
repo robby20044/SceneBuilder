@@ -9,7 +9,7 @@ var plane, plane2, plane3;
 var planeFollowing = false, plane2Following = false, plane3Following = false;
 var linesShowing = true;
 var lastPlane;
-var p;
+var activePlane;
 
 window.onload = function() {
     scene = new THREE.Scene();
@@ -48,7 +48,7 @@ window.onload = function() {
     scene.add(plane);
     scene.add(plane2);
     scene.add(plane3);
-    p = plane;
+    activePlane = plane;
     drawLines();
     animate();
 };
@@ -118,21 +118,21 @@ function onKeyDown(e) {
     }
     if (e.key == '1') {
         planeFollowing = !planeFollowing;
-        p = plane;
+        activePlane = plane;
     }
     if (e.key == '2') {
         plane2Following = !plane2Following;
-        p = plane2;
+        activePlane = plane2;
     }
     if (e.key == '3') {
         plane3Following = !plane3Following;
-        p = plane3;
+        activePlane = plane3;
     }
     if (e.key == "ArrowUp") {
-        p.scale.set(p.scale.x * 1.1, p.scale.y * 1.1);
+        activePlane.scale.set(activePlane.scale.x * 1.1, activePlane.scale.y * 1.1);
     }
     if (e.key == "ArrowDown") {
-        p.scale.set(p.scale.x * 0.9, p.scale.y * 0.9);
+        activePlane.scale.set(activePlane.scale.x * 0.9, activePlane.scale.y * 0.9);
     }
 }
 
