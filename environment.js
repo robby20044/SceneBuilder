@@ -5,8 +5,11 @@ var lines = [];
 var scene, camera, renderer;
 var windowWidth, windowHeight;
 var xMouseCoord, yMouseCoord;
-var plane;
+var plane, plane2, plane3;
+var planeFollowing = false, plane2Following = false, plane3Following = false;
 var linesShowing = true;
+var lastPlane;
+var p;
 
 window.onload = function() {
     scene = new THREE.Scene();
@@ -31,12 +34,21 @@ window.onload = function() {
     light.position.set( 10, 100, 10 );
     scene.add( light );
 
-    var geometry = new THREE.PlaneGeometry(1, 1);
-    var material = new THREE.MeshBasicMaterial({color: 0x00ffff});
-    plane = new THREE.Mesh(geometry, material);
+    var planeGeom = new THREE.PlaneGeometry(1, 1);
+    var cyan = new THREE.MeshBasicMaterial({color: 0x00ffff});
+    var yellow = new THREE.MeshBasicMaterial({color: 0xffff00});
+    var magenta = new THREE.MeshBasicMaterial({color: 0xff00ff});
+    plane = new THREE.Mesh(planeGeom, cyan);
+    plane2 = new THREE.Mesh(planeGeom, yellow);
+    plane3 = new THREE.Mesh(planeGeom, magenta);
     plane.position.set(31, 0);
+    plane2.position.set(0, -20);
+    plane3.position.set(0, -20);
+    lastPlane = plane;
     scene.add(plane);
-
+    scene.add(plane2);
+    scene.add(plane3);
+    p = plane;
     drawLines();
     animate();
 };
@@ -62,11 +74,9 @@ function drawLines() {
         lines.push(line);
         scene.add(line);
     });
-    var num = lines.length;
 }
 
 function removeLines() {
-    var len = lines.length;
     lines.forEach(line => {
         scene.remove(line);
     });
@@ -106,6 +116,24 @@ function onKeyDown(e) {
             linesShowing = true;
         }
     }
+    if (e.key == '1') {
+        planeFollowing = !planeFollowing;
+        p = plane;
+    }
+    if (e.key == '2') {
+        plane2Following = !plane2Following;
+        p = plane2;
+    }
+    if (e.key == '3') {
+        plane3Following = !plane3Following;
+        p = plane3;
+    }
+    if (e.key == "ArrowUp") {
+        p.scale.set(p.scale.x * 1.1, p.scale.y * 1.1);
+    }
+    if (e.key == "ArrowDown") {
+        p.scale.set(p.scale.x * 0.9, p.scale.y * 0.9);
+    }
 }
 
 // have a list of images
@@ -118,7 +146,15 @@ function animate() {
 
     requestAnimationFrame( animate );
 
-    plane.position.set(xMouseCoord, yMouseCoord);
+    if (planeFollowing) {
+        plane.position.set(xMouseCoord, yMouseCoord);
+    }
+    if (plane2Following) {
+        plane2.position.set(xMouseCoord, yMouseCoord);
+    }
+    if (plane3Following) {
+        plane3.position.set(xMouseCoord, yMouseCoord);
+    }
 
     renderer.render( scene, camera );
 };
