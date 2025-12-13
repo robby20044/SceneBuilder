@@ -8,16 +8,18 @@ var xMouseCoord, yMouseCoord;
 var plane, plane2, plane3;
 var planeFollowing = false, plane2Following = false, plane3Following = false;
 var linesShowing = true;
-var lastPlane;
-var activePlane;
+var lastPlane, activePlane;
+var screenHeight = 8;
+var screenWidth = 64;
 
 window.onload = function() {
     scene = new THREE.Scene();
-
+    
     windowWidth = window.innerWidth;
-    windowHeight = windowWidth / 64 * 10;
+    windowHeight = windowWidth / screenWidth * screenHeight;
 
-    camera = new THREE.OrthographicCamera(-32, 32, 5, -5);
+    camera = new THREE.OrthographicCamera(-1 * screenWidth / 2, screenWidth / 2, 
+        screenHeight / 2, -1 * screenHeight / 2);
     camera.position.set(0, 0, 100);
 
     // create renderer and setup the canvas
@@ -34,6 +36,7 @@ window.onload = function() {
     light.position.set( 10, 100, 10 );
     scene.add( light );
 
+    // setting up planes
     var planeGeom = new THREE.PlaneGeometry(1, 1);
     var cyan = new THREE.MeshBasicMaterial({color: 0x00ffff});
     var yellow = new THREE.MeshBasicMaterial({color: 0xffff00});
@@ -87,7 +90,7 @@ window.addEventListener('resize', onResize);
 
 function onResize() {
     windowWidth = window.innerWidth;
-    windowHeight = windowWidth / 64 * 10;
+    windowHeight = windowWidth / screenWidth * screenHeight;
     renderer.setSize( windowWidth, windowHeight);
 }
 
@@ -97,8 +100,8 @@ function onMouseMove(e) {
     // convert to canvas coords
     var xWindow = e.clientX - (window.innerWidth / 2);
     var yWindow = e.clientY - (window.innerHeight / 2);
-    var xCanvas = 32 * xWindow / (windowWidth / 2);
-    var yCanvas = -5 * yWindow / (windowHeight / 2);
+    var xCanvas = screenWidth / 2 * xWindow / (windowWidth / 2);
+    var yCanvas = -1 * screenHeight / 2 * yWindow / (windowHeight / 2);
     xMouseCoord = xCanvas;
     yMouseCoord = yCanvas;
 }

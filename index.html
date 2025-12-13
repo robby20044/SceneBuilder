@@ -3,46 +3,16 @@
   <head>
     <meta charset="UTF-8"/>
     <title>Scene Builder</title>
-    <style>
-
-      html,
-      body {
-        margin: 0px;
-        padding: 0px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        font-size: 18px;
-        font-family: monospace;
-        background: gray;
-        color: black;
-        height: 100vh;
-      }
-
-      #canvasContainer {
-        padding: 0px;
-        margin: 0px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-grow: 1;
-      }
-
-      #keybindPanel {
-        margin-top: 10px;
-        line-height: 0.2;
-      }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
 
   <body>
-    <!--<div id="keybindPanel">
-      <b>Controls</b>
-      <p>Toggle Lines: L</p>
-      <p>Hide Controls: C</p>
-    </div>-->
+    <pre id="controls"> 
+ Controls:
+ Toggle Lines: L
+ Mouse Following: 1, 2, 3
+ Resize Last Selected Square: Up/Down
+    </pre>
     <div id="canvasContainer">
       <canvas id="c"></canvas>
     </div>
@@ -58,6 +28,30 @@
     </script>
 
     <script type="module" src="environment.js"></script>
+
+    <div id="gallary">
+      <img src="images/room1.jpg">
+      <img src="images/room2.jpg">
+      <img src="images/crutches.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+            <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+            <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+      <img src="images/room1.jpg">
+    </div>
+
   </body>
 
 </html>
