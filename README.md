@@ -1,40 +1,14 @@
 # Scene Builder
 
-<br>
-
-## Current State
-
 #### [🚧 Scene Builder 🚧](https://robby20044.github.io/SceneBuilder/index.html)
-<a href="https://robby20044.github.io/SceneBuilder/index.html" target=_blank>test</a>
 
-<br><br>
+<br>
 
 ## Goal
 ### ➡️ Provide an easy option to make custom scenes for the 3D caves  
 #### The staff requested customizable background environments. Unity is one method of making scenes for the 3D caves, but it is not very beginner friendly. A web-based environment to create scenes is quicker, easier, and makes it more accessible for anyone to create their own custom scene. 
 
 <br>
-
-#### The user will be able to: 
-- select a background image to simulate an environment
-- bring in other images to layer on top of the background
-- save custom scenes and load them back up
-
-<br><br><br>
-
-## Technologies
-
-#### I'm using `three.js` to create the customizable scene. The scene has very wide aspect ratio allowing it to span across all four walls of the 3D caves
-
-<br><br><br>
-
-## Challenges
-
-#### ⚠️ Picking a format of the webpage  
-#### ⚠️ Proper testing can't solely be done on a laptop  
-
-
-<br><br><br>
 
 ## Project Status
 
