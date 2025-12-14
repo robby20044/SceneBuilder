@@ -2,19 +2,23 @@
 import * as THREE from "https://unpkg.com/three@latest/build/three.module.js";
 
 var lines = [];
+var images = [];
 var scene, camera, renderer;
 var windowWidth, windowHeight;
 var xMouseCoord, yMouseCoord;
-var plane, plane2, plane3;
-var planeFollowing = false, plane2Following = false, plane3Following = false;
 var linesShowing = true;
-var lastPlane, activePlane;
+var mouseDown, mouseInScene;
 var screenHeight = 8;
 var screenWidth = 64;
+var loader = new THREE.TextureLoader();
+var raycaster = new THREE.Raycaster();
+var clickedElement;
+var selectedObject, prevObject;
+
 
 window.onload = function() {
     scene = new THREE.Scene();
-    
+
     windowWidth = window.innerWidth;
     windowHeight = windowWidth / screenWidth * screenHeight;
 
@@ -26,32 +30,8 @@ window.onload = function() {
     var canvas = document.getElementById("c");
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize( windowWidth, windowHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-
-    // setup lights
-    var ambientLight = new THREE.AmbientLight();
-    scene.add( ambientLight );
-
-    var light = new THREE.DirectionalLight( 0xffffff, 5.0 );
-    light.position.set( 10, 100, 10 );
-    scene.add( light );
-
-    // setting up planes
-    var planeGeom = new THREE.PlaneGeometry(1, 1);
-    var cyan = new THREE.MeshBasicMaterial({color: 0x00ffff});
-    var yellow = new THREE.MeshBasicMaterial({color: 0xffff00});
-    var magenta = new THREE.MeshBasicMaterial({color: 0xff00ff});
-    plane = new THREE.Mesh(planeGeom, cyan);
-    plane2 = new THREE.Mesh(planeGeom, yellow);
-    plane3 = new THREE.Mesh(planeGeom, magenta);
-    plane.position.set(31, 0);
-    plane2.position.set(0, -20);
-    plane3.position.set(0, -20);
-    lastPlane = plane;
-    scene.add(plane);
-    scene.add(plane2);
-    scene.add(plane3);
-    activePlane = plane;
     drawLines();
     animate();
 };
@@ -87,14 +67,18 @@ function removeLines() {
 }
 
 window.addEventListener('resize', onResize);
+window.addEventListener('keydown', onKeyDown);
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('mousedown', onMouseDown);
+window.addEventListener('mouseup', onMouseUp);
+window.addEventListener('wheel', onScroll);
+
 
 function onResize() {
     windowWidth = window.innerWidth;
     windowHeight = windowWidth / screenWidth * screenHeight;
     renderer.setSize( windowWidth, windowHeight);
 }
-
-window.addEventListener('mousemove', onMouseMove);
 
 function onMouseMove(e) {
     // convert to canvas coords
@@ -105,8 +89,6 @@ function onMouseMove(e) {
     xMouseCoord = xCanvas;
     yMouseCoord = yCanvas;
 }
-
-window.addEventListener('keydown', onKeyDown);
 
 function onKeyDown(e) {
     if (e.key == 'l') {
@@ -119,45 +101,80 @@ function onKeyDown(e) {
             linesShowing = true;
         }
     }
-    if (e.key == '1') {
-        planeFollowing = !planeFollowing;
-        activePlane = plane;
+}
+
+function onMouseDown(e) {
+    clickedElement = e.target;
+    mouseDown = true;
+    if (e.target.tagName == 'IMG') {
+        var width = e.target.naturalWidth;
+        var height = e.target.naturalHeight;
+        var ratio = width / height;
+        // https://codepen.io/duhaime/pen/jaYdLg used to learn how to add images to scene
+        var texture = loader.load(e.target.src);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        var imageMaterial = new THREE.SpriteMaterial({
+            map: texture,
+            color: 0xffffff
+        });
+        var image = new THREE.Sprite(imageMaterial);
+        image.scale.x = 5 * ratio;
+        image.scale.y = 5;
+        image.position.set(0, 0, 0);
+        images.push(image);
+        scene.add(image);
     }
-    if (e.key == '2') {
-        plane2Following = !plane2Following;
-        activePlane = plane2;
-    }
-    if (e.key == '3') {
-        plane3Following = !plane3Following;
-        activePlane = plane3;
-    }
-    if (e.key == "ArrowUp") {
-        activePlane.scale.set(activePlane.scale.x * 1.1, activePlane.scale.y * 1.1);
-    }
-    if (e.key == "ArrowDown") {
-        activePlane.scale.set(activePlane.scale.x * 0.9, activePlane.scale.y * 0.9);
+    if (clickedElement.tagName == 'CANVAS') {
+        var mouse = new THREE.Vector2(xMouseCoord / (screenWidth / 2), yMouseCoord / (screenHeight / 2));
+        raycaster.setFromCamera(mouse, camera);
+        var intersects = raycaster.intersectObjects(scene.children);
+        intersects.forEach(element => {
+        if (element.object.type != "Line") {
+            selectedObject = element.object;
+        }
+        else {selectedObject = null;}
+        });
     }
 }
 
-// have a list of images
-// if an image is clicked, add it to the scene
-// be able to move the images around
+function onMouseUp(e) {
+    mouseDown = false;
+    prevObject = selectedObject;
+    selectedObject = null;
+}
+
+function onScroll(e) {
+    if (mouseDown) {
+        var xScale = selectedObject.scale.x;
+        var yScale = selectedObject.scale.y;
+        var aspectRatio = xScale / yScale;
+        selectedObject.scale.set(xScale + (0.01 * e.deltaY * -1) * aspectRatio, yScale + (0.01 * e.deltaY * -1));
+    }
+    else if (mouseInScene) {
+        var xScale = prevObject.scale.x;
+        var yScale = prevObject.scale.y;
+        var aspectRatio = xScale / yScale;
+        prevObject.scale.set(xScale + (0.01 * e.deltaY * -1) * aspectRatio, yScale + (0.01 * e.deltaY * -1));
+    }
+}
+
+// TODO:
 // add ability to remove images
+// change layer of image
 // add ability to save and load scenes
 
 function animate() {
 
     requestAnimationFrame( animate );
 
-    if (planeFollowing) {
-        plane.position.set(xMouseCoord, yMouseCoord);
+    if (selectedObject != null && mouseDown) {
+        selectedObject.position.set(xMouseCoord, yMouseCoord);
     }
-    if (plane2Following) {
-        plane2.position.set(xMouseCoord, yMouseCoord);
+
+    if (yMouseCoord < screenHeight / -2 || yMouseCoord > screenHeight / 2) {
+        mouseInScene = false;
     }
-    if (plane3Following) {
-        plane3.position.set(xMouseCoord, yMouseCoord);
-    }
+    else {mouseInScene = true;}
 
     renderer.render( scene, camera );
 };

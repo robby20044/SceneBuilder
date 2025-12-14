@@ -1,22 +1,19 @@
 :root {
-    --gallaryColor: rgb(178, 159, 110);
+    --gallaryColor: rgb(108, 108, 108);
 }
 
 html, body {
     margin: 0px;
     height: 100%;
-    background-color: rgb(39, 73, 123);
-    color: black;
+    background-color: rgb(108, 108, 108);
+    color: white;
     font-family: monospace;
-    font-size: 18px;
+    font-size: 3vh;
+    overflow: hidden;
 }
 
 #controls {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
+    margin: 0px;
     z-index: 1;
 }
 
@@ -30,7 +27,6 @@ html, body {
 
 #c {
     width: 100vw;
-    aspect-ratio: 64 / 8;
 }
 
 #gallary {
