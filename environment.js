@@ -101,6 +101,16 @@ function onKeyDown(e) {
             linesShowing = true;
         }
     }
+    if (e.key == "ArrowUp") {
+        var xScale = prevObject.scale.x;
+        var yScale = prevObject.scale.y;
+        prevObject.scale.set(xScale * 1.02, yScale * 1.02);
+    }
+    if (e.key == "ArrowDown") {
+        var xScale = prevObject.scale.x;
+        var yScale = prevObject.scale.y;
+        prevObject.scale.set(xScale * 0.98, yScale * 0.98);
+    }
 }
 
 function onMouseDown(e) {
@@ -159,6 +169,7 @@ function onScroll(e) {
 }
 
 // TODO:
+// find more images
 // add ability to remove images
 // change layer of image
 // add ability to save and load scenes
