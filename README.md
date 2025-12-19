@@ -12,12 +12,15 @@
 
 ## Project Status
 
+### Completed Features
 #### ✅ Resizable webpage + GitHub  
 #### ✅ three.js scene
 #### ✅ Mouse viewport tracking  
 #### ✅ Image gallary  
 #### ✅ Ability to add images to scene  
 #### ✅ Image movement and scaling  
-#### 🔶 Expand image colleciton  
-#### 🔶 Ability to remove and change layer of images  
-#### 🔶 Ability to save / load scenes  
+
+### Upcoming Features
+#### 🔶 Expanded image colleciton  
+#### 🔶 Layers for ordering images  
+#### 🔶 Scene saving & loading  
