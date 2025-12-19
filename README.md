@@ -1,5 +1,7 @@
 # Scene Builder
 
+#### [🚧 Scene Builder 🚧](https://robby20044.github.io/SceneBuilder/index.html)
+
 <br>
 
 ## Goal
@@ -8,42 +10,14 @@
 
 <br>
 
-#### The user will be able to: 
-- select a background image to simulate an environment
-- bring in other images to layer on top of the background
-- save custom scenes and load them back up
-
-
-
-<br><br><br>
-
-## Current State
-
-#### [🚧 Scene Builder 🚧](https://robby20044.github.io/SceneBuilder/index.html)
-
-<br><br><br>
-
-## Technologies
-
-#### I'm using `three.js` to create the customizable scene. The scene has a 64:10 aspect ratio allowing it to span across all four walls of the 3D caves
-
-<br><br><br>
-
-## Challenges
-
-#### ⚠️ Picking a format of the webpage  
-#### ⚠️ Proper testing can't solely be done on a laptop  
-
-
-<br><br><br>
-
 ## Project Status
 
 #### ✅ Resizable webpage + GitHub  
 #### ✅ three.js scene
-#### ✅ Mouse viewport tracking
-#### 🔶 GUI with images  
+#### ✅ Mouse viewport tracking  
+#### ✅ Image gallary  
+#### ✅ Ability to add images to scene  
+#### ✅ Image movement and scaling  
+#### 🔶 Expand image colleciton  
+#### 🔶 Ability to remove and change layer of images  
 #### 🔶 Ability to save / load scenes  
-#### 🔶 Incorporate touch input
-#### 🔶 Testing  
-#### 🔜 Ready to use!
