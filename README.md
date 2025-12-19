@@ -28,7 +28,8 @@
 ### Upcoming Features
 #### 🟡 Expanded image colleciton  
 #### 🟡 Layers for ordering images  
-#### 🟡 Scene saving & loading  
+#### 🟡 Scene saving & loading
+#### 🟡 Save scene as panorama
 
 ### Potential Future Additions
 #### 🔷 User-uploaded images  
