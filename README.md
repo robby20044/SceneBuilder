@@ -1,12 +1,17 @@
 # Scene Builder
 
-#### [🚧 Scene Builder 🚧](https://robby20044.github.io/SceneBuilder/index.html)
+### [🚧 Scene Builder 🚧](https://robby20044.github.io/SceneBuilder/index.html)
+### 🕹️ Controls:  
+- Click on an image to add it to the scene  
+- Click and drag images within the scene to move them  
+- Use scroll wheel or up/down arrow keys to resize images  
+- Press L to turn on/off guide lines  
 
 <br>
 
-## Goal
-### ➡️ Provide an easy option to make custom scenes for the 3D caves  
-#### The staff requested customizable background environments. Unity is one method of making scenes for the 3D caves, but it is not very beginner friendly. A web-based environment to create scenes is quicker, easier, and makes it more accessible for anyone to create their own custom scene. 
+## Purpose
+### ➡️ Provide an easy option to make custom scenes for the immersive suite at the Manning College of Nursing at UMass Boston 
+#### SceneBuilder is a webpage that allows users to design custom scenes for the immersive suite by just clicking and dragging images.
 
 <br>
 
@@ -24,3 +29,8 @@
 #### 🔶 Expanded image colleciton  
 #### 🔶 Layers for ordering images  
 #### 🔶 Scene saving & loading  
+
+### Potential Future Additions
+#### 🔷 User-uploaded images  
+#### 🔷 In-scene GUI for images  
+#### 🔷 Incorporate touch input  
