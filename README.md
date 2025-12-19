@@ -26,9 +26,9 @@
 #### ✅ Image movement and scaling  
 
 ### Upcoming Features
-#### 🔶 Expanded image colleciton  
-#### 🔶 Layers for ordering images  
-#### 🔶 Scene saving & loading  
+#### 🟡 Expanded image colleciton  
+#### 🟡 Layers for ordering images  
+#### 🟡 Scene saving & loading  
 
 ### Potential Future Additions
 #### 🔷 User-uploaded images  
