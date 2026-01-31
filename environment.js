@@ -116,6 +116,9 @@ function onKeyDown(e) {
 function onMouseDown(e) {
     clickedElement = e.target;
     mouseDown = true;
+    if (e.target.id == 'download') {
+        downloadScene();
+    }
     if (e.target.tagName == 'IMG') {
         var width = e.target.naturalWidth;
         var height = e.target.naturalHeight;
@@ -166,6 +169,16 @@ function onScroll(e) {
         var aspectRatio = xScale / yScale;
         prevObject.scale.set(xScale + (0.01 * e.deltaY * -1) * aspectRatio, yScale + (0.01 * e.deltaY * -1));
     }
+}
+
+function downloadScene() {
+    const imagesData = [];
+    images.forEach(img => {
+        imagesData.push([img.material.map.source.data.currentSrc, img.position, img.scale]);
+    });
+    var imagesJSON = JSON.stringify(imagesData);
+    const blob = new Blob([imagesJSON], {type: "applications/json"});
+    window.open(URL.createObjectURL(blob));
 }
 
 // TODO:
