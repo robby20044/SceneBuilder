@@ -38,12 +38,12 @@ https://github.com/user-attachments/assets/9d67545b-2a17-442d-ac06-5da00dac0170
 #### ✅ Image gallary  
 #### ✅ Ability to add images to scene  
 #### ✅ Image movement and scaling  
-#### ✅ Scene downloading  
+#### ✅ Scene downloading
+#### ✅ Scene uploading  
 
 ### Upcoming Features
 #### 🟡 Expanded image colleciton  
 #### 🟡 Layers for ordering images  
-#### 🟡 Scene uploading
 #### 🟡 Save scene as panorama
 
 ### Potential Future Additions
