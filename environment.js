@@ -73,6 +73,11 @@ window.addEventListener('mousedown', onMouseDown);
 window.addEventListener('mouseup', onMouseUp);
 window.addEventListener('wheel', onScroll);
 
+const fileUpload = document.querySelector("#sceneUpload")
+fileUpload.addEventListener("change", async (event) => {
+    var uploadedScene = await event.target.files[0].text()
+    buildScene(uploadedScene)
+})
 
 function onResize() {
     windowWidth = window.innerWidth;
@@ -120,22 +125,7 @@ function onMouseDown(e) {
         downloadScene();
     }
     if (e.target.tagName == 'IMG') {
-        var width = e.target.naturalWidth;
-        var height = e.target.naturalHeight;
-        var ratio = width / height;
-        // https://codepen.io/duhaime/pen/jaYdLg used to learn how to add images to scene
-        var texture = loader.load(e.target.src);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        var imageMaterial = new THREE.SpriteMaterial({
-            map: texture,
-            color: 0xffffff
-        });
-        var image = new THREE.Sprite(imageMaterial);
-        image.scale.x = 5 * ratio;
-        image.scale.y = 5;
-        image.position.set(0, 0, 0);
-        images.push(image);
-        scene.add(image);
+        addImage(e.target)
     }
     if (clickedElement.tagName == 'CANVAS') {
         var mouse = new THREE.Vector2(xMouseCoord / (screenWidth / 2), yMouseCoord / (screenHeight / 2));
@@ -181,11 +171,56 @@ function downloadScene() {
     window.open(URL.createObjectURL(blob));
 }
 
-// TODO:
-// find more images
-// add ability to remove images
-// change layer of image
-// add ability to save and load scenes
+function buildScene(fileContents) {
+    var data = JSON.parse(fileContents)
+    data.forEach(imageData => {
+        // element = [image url, position, scale]
+        addImage(imageData[0], imageData[1], imageData[2])
+    })
+}
+
+
+// can be called with just an IMG as a parameter, or the URL, pos, and scale
+function addImage(img, position, scale) {
+    // if position is undefined, that means an IMG was passed as an arg, so 
+    // the url is at img.src
+    if (position == undefined) {
+        var texture = loader.load(img.src);
+    }
+    // if it is defined, img is the url
+    else {
+        var texture = loader.load(img);
+    }
+
+    texture.colorSpace = THREE.SRGBColorSpace;
+    var imageMaterial = new THREE.SpriteMaterial({
+        map: texture,
+        color: 0xffffff
+    });
+    var image = new THREE.Sprite(imageMaterial);
+
+    // calculates scale if it wasn't given
+    if (scale == undefined) {    
+        var width = img.naturalWidth;
+        var height = img.naturalHeight;
+        var ratio = width / height;
+        image.scale.x = 5 * ratio;
+        image.scale.y = 5;
+    }
+    else {
+        image.scale.x = scale.x
+        image.scale.y = scale.y
+    }
+    
+    if (position != undefined) {
+        image.position.set(position.x, position.y, position.z);
+    }
+    else {
+        image.position.set(0, 0, 0)
+    }
+    images.push(image);
+    scene.add(image);
+}
 
 function animate() {
 
