@@ -14,6 +14,7 @@ var loader = new THREE.TextureLoader();
 var raycaster = new THREE.Raycaster();
 var clickedElement;
 var selectedObject, prevObject;
+var xOffset, yOffset;
 
 
 window.onload = function() {
@@ -137,6 +138,8 @@ function onMouseDown(e) {
         }
         else {selectedObject = null;}
         });
+        xOffset = selectedObject.position.x - xMouseCoord;
+        yOffset = selectedObject.position.y - yMouseCoord;
     }
 }
 
@@ -228,7 +231,7 @@ function animate() {
     requestAnimationFrame( animate );
 
     if (selectedObject != null && mouseDown) {
-        selectedObject.position.set(xMouseCoord, yMouseCoord);
+        selectedObject.position.set(xMouseCoord + xOffset, yMouseCoord + yOffset);
     }
 
     if (yMouseCoord < screenHeight / -2 || yMouseCoord > screenHeight / 2) {
