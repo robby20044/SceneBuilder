@@ -1,11 +1,11 @@
 # Scene Builder
 
-### [🚧 Use Scene Builder Here 🚧](https://robby20044.github.io/SceneBuilder/index.html)
+### [🚧 Use Scene Builder](https://robby20044.github.io/SceneBuilder/index.html)
 ### 🕹️ Controls:  
-- Click on an image to add it to the scene  
+- Click an image to add it to the scene  
 - Click and drag images within the scene to move them  
 - Use scroll wheel or up/down arrow keys to resize images  
-- Press L to turn on/off guide lines  
+- Press L to toggle guide lines  
 
 <br>
 
