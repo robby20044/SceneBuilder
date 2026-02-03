@@ -180,6 +180,7 @@ function buildScene(fileContents) {
 }
 
 
+
 // can be called with just an IMG as a parameter, or the URL, pos, and scale
 function addImage(img, position, scale) {
     // if position is undefined, that means an IMG was passed as an arg, so 
