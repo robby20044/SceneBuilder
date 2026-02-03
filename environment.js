@@ -5,24 +5,24 @@ var lines = [];
 var images = [];
 var scene, camera, renderer;
 var windowWidth, windowHeight;
-var xMouseCoord, yMouseCoord;
 var linesShowing = true;
-var mouseDown, mouseInScene;
+let mouse = {
+    x: 0, y: 0,
+    down: false,
+    inScene: false,
+    xOffset: 0, yOffset: 0
+}
 var screenHeight = 8;
 var screenWidth = 64;
-var loader = new THREE.TextureLoader();
-var raycaster = new THREE.Raycaster();
-var clickedElement;
 var selectedObject, prevObject;
-var xOffset, yOffset;
 
 
 window.onload = function() {
     scene = new THREE.Scene();
 
+    // create and setup camera
     windowWidth = window.innerWidth;
     windowHeight = windowWidth / screenWidth * screenHeight;
-
     camera = new THREE.OrthographicCamera(-1 * screenWidth / 2, screenWidth / 2, 
         screenHeight / 2, -1 * screenHeight / 2);
     camera.position.set(0, 0, 100);
@@ -37,6 +37,7 @@ window.onload = function() {
     animate();
 };
 
+// draws guiding lines to divide the scene into 4 parts
 function drawLines() {
         var line1Points = [
         new THREE.Vector3(-16, -5, 0),
@@ -60,6 +61,7 @@ function drawLines() {
     });
 }
 
+// removes the lines from the scene
 function removeLines() {
     lines.forEach(line => {
         scene.remove(line);
@@ -74,28 +76,35 @@ window.addEventListener('mousedown', onMouseDown);
 window.addEventListener('mouseup', onMouseUp);
 window.addEventListener('wheel', onScroll);
 
+// listens for file upload and reads it
 const fileUpload = document.querySelector("#sceneUpload")
 fileUpload.addEventListener("change", async (event) => {
     var uploadedScene = await event.target.files[0].text()
     buildScene(uploadedScene)
 })
 
+// resizes the scene when the window is resized
 function onResize() {
     windowWidth = window.innerWidth;
     windowHeight = windowWidth / screenWidth * screenHeight;
     renderer.setSize( windowWidth, windowHeight);
 }
 
+// updates the mouse coordinates as it moves
 function onMouseMove(e) {
     // convert to canvas coords
     var xWindow = e.clientX - (window.innerWidth / 2);
     var yWindow = e.clientY - (window.innerHeight / 2);
     var xCanvas = screenWidth / 2 * xWindow / (windowWidth / 2);
     var yCanvas = -1 * screenHeight / 2 * yWindow / (windowHeight / 2);
-    xMouseCoord = xCanvas;
-    yMouseCoord = yCanvas;
+    mouse.x = xCanvas;
+    mouse.y = yCanvas;
 }
 
+// controls:
+// l : toggle visibillity of guiding lines
+// up arrow : enlarges selected image
+// down arrow : shrinks selected image
 function onKeyDown(e) {
     if (e.key == 'l') {
         if (linesShowing) {
@@ -119,18 +128,26 @@ function onKeyDown(e) {
     }
 }
 
+// adds functionality for various actions
 function onMouseDown(e) {
-    clickedElement = e.target;
-    mouseDown = true;
+    let clickedElement = e.target;
+    mouse.down = true;
+    // downloads the scene if the download button is clicked
     if (e.target.id == 'download') {
         downloadScene();
     }
+    // adds an image if it was clicked
     if (e.target.tagName == 'IMG') {
         addImage(e.target)
     }
+    // logic for moving images with the mouse
     if (clickedElement.tagName == 'CANVAS') {
-        var mouse = new THREE.Vector2(xMouseCoord / (screenWidth / 2), yMouseCoord / (screenHeight / 2));
-        raycaster.setFromCamera(mouse, camera);
+        // uses ray picking to establish what image the mouse selected 
+        // (while ignoring the guiding lines) and updates it to the 
+        // currently selected object
+        var raycaster = new THREE.Raycaster();
+        var mouseLocation = new THREE.Vector2(mouse.x / (screenWidth / 2), mouse.y / (screenHeight / 2));
+        raycaster.setFromCamera(mouseLocation, camera);
         var intersects = raycaster.intersectObjects(scene.children);
         intersects.forEach(element => {
         if (element.object.type != "Line") {
@@ -138,32 +155,36 @@ function onMouseDown(e) {
         }
         else {selectedObject = null;}
         });
-        xOffset = selectedObject.position.x - xMouseCoord;
-        yOffset = selectedObject.position.y - yMouseCoord;
+        // the offset is used to keep a memory of the relative positioning
+        // of the mouse and image
+        if (selectedObject != null) {
+            mouse.xOffset = selectedObject.position.x - mouse.x;
+            mouse.yOffset = selectedObject.position.y - mouse.y;
+        }
     }
 }
 
+// keeps a memory of the last selected object
 function onMouseUp(e) {
-    mouseDown = false;
+    mouse.down = false;
     prevObject = selectedObject;
     selectedObject = null;
 }
 
+// enlarges/shrinks the last selected image with the scroll wheel
 function onScroll(e) {
-    if (mouseDown) {
-        var xScale = selectedObject.scale.x;
-        var yScale = selectedObject.scale.y;
-        var aspectRatio = xScale / yScale;
-        selectedObject.scale.set(xScale + (0.01 * e.deltaY * -1) * aspectRatio, yScale + (0.01 * e.deltaY * -1));
-    }
-    else if (mouseInScene) {
-        var xScale = prevObject.scale.x;
-        var yScale = prevObject.scale.y;
-        var aspectRatio = xScale / yScale;
-        prevObject.scale.set(xScale + (0.01 * e.deltaY * -1) * aspectRatio, yScale + (0.01 * e.deltaY * -1));
-    }
+    let current = null;
+    if (selectedObject != null) {current = selectedObject;}
+    else if (prevObject != null) {current = prevObject;}
+    if (current == null || !mouse.inScene) {return;}
+    var xScale = current.scale.x;
+    var yScale = current.scale.y;
+    var aspectRatio = xScale / yScale;
+    current.scale.set(xScale + (0.01 * e.deltaY * -1) * aspectRatio, yScale + (0.01 * e.deltaY * -1));
 }
 
+// records the url, position, and scale of each image in the scene, 
+// stringifies it, then downloads this data
 function downloadScene() {
     const imagesData = [];
     images.forEach(img => {
@@ -174,6 +195,7 @@ function downloadScene() {
     window.open(URL.createObjectURL(blob));
 }
 
+// recreates a scene from the save file
 function buildScene(fileContents) {
     var data = JSON.parse(fileContents)
     data.forEach(imageData => {
@@ -183,11 +205,12 @@ function buildScene(fileContents) {
 }
 
 
-
+// adds an image to the scene.
 // can be called with just an IMG as a parameter, or the URL, pos, and scale
 function addImage(img, position, scale) {
-    // if position is undefined, that means an IMG was passed as an arg, so 
-    // the url is at img.src
+    var loader = new THREE.TextureLoader();
+    // if position is undefined, that means an IMG element was passed as an arg, 
+    // so the url is img.src
     if (position == undefined) {
         var texture = loader.load(img.src);
     }
@@ -196,6 +219,7 @@ function addImage(img, position, scale) {
         var texture = loader.load(img);
     }
 
+    // creates the image
     texture.colorSpace = THREE.SRGBColorSpace;
     var imageMaterial = new THREE.SpriteMaterial({
         map: texture,
@@ -230,14 +254,15 @@ function animate() {
 
     requestAnimationFrame( animate );
 
-    if (selectedObject != null && mouseDown) {
-        selectedObject.position.set(xMouseCoord + xOffset, yMouseCoord + yOffset);
+    if (selectedObject != null && mouse.down) {
+        selectedObject.position.set(mouse.x + mouse.xOffset, 
+            mouse.y + mouse.yOffset);
     }
 
-    if (yMouseCoord < screenHeight / -2 || yMouseCoord > screenHeight / 2) {
-        mouseInScene = false;
+    if (mouse.y < screenHeight / -2 || mouse.y > screenHeight / 2) {
+        mouse.inScene = false;
     }
-    else {mouseInScene = true;}
+    else {mouse.inScene = true;}
 
     renderer.render( scene, camera );
 };
