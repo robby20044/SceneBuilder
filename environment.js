@@ -1,37 +1,37 @@
 
 import * as THREE from "https://unpkg.com/three@latest/build/three.module.js";
 
-var lines = [];
-var images = [];
-var scene, camera, renderer;
-var windowWidth, windowHeight;
-var linesShowing = true;
-let mouse = {
-    x: 0, y: 0,
-    down: false,
-    inScene: false,
-    xOffset: 0, yOffset: 0
+const stateInfo = {
+    lines: [],
+    images: [],
+    scene: null,
+    camera: null,
+    renderer: null,
+    window: {width: 0, height: 0},
+    linesShowing: false,
+    mouse: {x: 0, y: 0, down: false, inScene: false, xOffset: 0, yOffset: 0},
+    frustum: {width: 64, height: 8},
+    selectedObject: null,
+    prevObject: null
 }
-var screenHeight = 8;
-var screenWidth = 64;
-var selectedObject, prevObject;
+
 
 
 window.onload = function() {
-    scene = new THREE.Scene();
+    stateInfo.scene = new THREE.Scene();
 
     // create and setup camera
-    windowWidth = window.innerWidth;
-    windowHeight = windowWidth / screenWidth * screenHeight;
-    camera = new THREE.OrthographicCamera(-1 * screenWidth / 2, screenWidth / 2, 
-        screenHeight / 2, -1 * screenHeight / 2);
-    camera.position.set(0, 0, 100);
+    stateInfo.window.width = window.innerWidth;
+    stateInfo.window.height = stateInfo.window.width / stateInfo.frustum.width * stateInfo.frustum.height;
+    stateInfo.camera = new THREE.OrthographicCamera(-1 * stateInfo.frustum.width / 2, stateInfo.frustum.width / 2, 
+        stateInfo.frustum.height / 2, -1 * stateInfo.frustum.height / 2);
+    stateInfo.camera.position.set(0, 0, 100);
 
     // create renderer and setup the canvas
     var canvas = document.getElementById("c");
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setSize( windowWidth, windowHeight);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    stateInfo.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    stateInfo.renderer.setSize( stateInfo.window.width, stateInfo.window.height);
+    stateInfo.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     drawLines();
     animate();
@@ -56,17 +56,17 @@ function drawLines() {
         var geometry = new THREE.BufferGeometry().setFromPoints(element);
         var material = new THREE.LineBasicMaterial({color: 0xffffff})
         var line = new THREE.Line(geometry, material);
-        lines.push(line);
-        scene.add(line);
+        stateInfo.lines.push(line);
+        stateInfo.scene.add(line);
     });
 }
 
 // removes the lines from the scene
 function removeLines() {
-    lines.forEach(line => {
-        scene.remove(line);
+    stateInfo.lines.forEach(line => {
+        stateInfo.scene.remove(line);
     });
-    lines = [];
+    stateInfo.lines = [];
 }
 
 window.addEventListener('resize', onResize);
@@ -85,9 +85,9 @@ fileUpload.addEventListener("change", async (event) => {
 
 // resizes the scene when the window is resized
 function onResize() {
-    windowWidth = window.innerWidth;
-    windowHeight = windowWidth / screenWidth * screenHeight;
-    renderer.setSize( windowWidth, windowHeight);
+    stateInfo.window.width = window.innerWidth;
+    stateInfo.window.height = stateInfo.window.width / stateInfo.frustum.width * stateInfo.frustum.height;
+    stateInfo.renderer.setSize( stateInfo.window.width, stateInfo.window.height);
 }
 
 // updates the mouse coordinates as it moves
@@ -95,10 +95,10 @@ function onMouseMove(e) {
     // convert to canvas coords
     var xWindow = e.clientX - (window.innerWidth / 2);
     var yWindow = e.clientY - (window.innerHeight / 2);
-    var xCanvas = screenWidth / 2 * xWindow / (windowWidth / 2);
-    var yCanvas = -1 * screenHeight / 2 * yWindow / (windowHeight / 2);
-    mouse.x = xCanvas;
-    mouse.y = yCanvas;
+    var xCanvas = stateInfo.frustum.width / 2 * xWindow / (stateInfo.window.width / 2);
+    var yCanvas = -1 * stateInfo.frustum.height / 2 * yWindow / (stateInfo.window.height / 2);
+    stateInfo.mouse.x = xCanvas;
+    stateInfo.mouse.y = yCanvas;
 }
 
 // controls:
@@ -107,31 +107,31 @@ function onMouseMove(e) {
 // down arrow : shrinks selected image
 function onKeyDown(e) {
     if (e.key == 'l') {
-        if (linesShowing) {
+        if (stateInfo.linesShowing) {
             removeLines();
-            linesShowing = false;
+            stateInfo.linesShowing = false;
         }
-        else if (!linesShowing) {
+        else if (!stateInfo.linesShowing) {
             drawLines();
-            linesShowing = true;
+            stateInfo.linesShowing = true;
         }
     }
     if (e.key == "ArrowUp") {
-        var xScale = prevObject.scale.x;
-        var yScale = prevObject.scale.y;
-        prevObject.scale.set(xScale * 1.02, yScale * 1.02);
+        var xScale = stateInfo.prevObject.scale.x;
+        var yScale = stateInfo.prevObject.scale.y;
+        stateInfo.prevObject.scale.set(xScale * 1.02, yScale * 1.02);
     }
     if (e.key == "ArrowDown") {
-        var xScale = prevObject.scale.x;
-        var yScale = prevObject.scale.y;
-        prevObject.scale.set(xScale * 0.98, yScale * 0.98);
+        var xScale = stateInfo.prevObject.scale.x;
+        var yScale = stateInfo.prevObject.scale.y;
+        stateInfo.prevObject.scale.set(xScale * 0.98, yScale * 0.98);
     }
 }
 
 // adds functionality for various actions
 function onMouseDown(e) {
     let clickedElement = e.target;
-    mouse.down = true;
+    stateInfo.mouse.down = true;
     // downloads the scene if the download button is clicked
     if (e.target.id == 'download') {
         downloadScene();
@@ -146,37 +146,37 @@ function onMouseDown(e) {
         // (while ignoring the guiding lines) and updates it to the 
         // currently selected object
         var raycaster = new THREE.Raycaster();
-        var mouseLocation = new THREE.Vector2(mouse.x / (screenWidth / 2), mouse.y / (screenHeight / 2));
-        raycaster.setFromCamera(mouseLocation, camera);
-        var intersects = raycaster.intersectObjects(scene.children);
+        var mouseLocation = new THREE.Vector2(stateInfo.mouse.x / (stateInfo.frustum.width / 2), stateInfo.mouse.y / (stateInfo.frustum.height / 2));
+        raycaster.setFromCamera(mouseLocation, stateInfo.camera);
+        var intersects = raycaster.intersectObjects(stateInfo.scene.children);
         intersects.forEach(element => {
         if (element.object.type != "Line") {
-            selectedObject = element.object;
+            stateInfo.selectedObject = element.object;
         }
-        else {selectedObject = null;}
+        else {stateInfo.selectedObject = null;}
         });
         // the offset is used to keep a memory of the relative positioning
         // of the mouse and image
-        if (selectedObject != null) {
-            mouse.xOffset = selectedObject.position.x - mouse.x;
-            mouse.yOffset = selectedObject.position.y - mouse.y;
+        if (stateInfo.selectedObject != null) {
+            stateInfo.mouse.xOffset = stateInfo.selectedObject.position.x - stateInfo.mouse.x;
+            stateInfo.mouse.yOffset = stateInfo.selectedObject.position.y - stateInfo.mouse.y;
         }
     }
 }
 
 // keeps a memory of the last selected object
 function onMouseUp(e) {
-    mouse.down = false;
-    prevObject = selectedObject;
-    selectedObject = null;
+    stateInfo.mouse.down = false;
+    stateInfo.prevObject = stateInfo.selectedObject;
+    stateInfo.selectedObject = null;
 }
 
 // enlarges/shrinks the last selected image with the scroll wheel
 function onScroll(e) {
     let current = null;
-    if (selectedObject != null) {current = selectedObject;}
-    else if (prevObject != null) {current = prevObject;}
-    if (current == null || !mouse.inScene) {return;}
+    if (stateInfo.selectedObject != null) {current = stateInfo.selectedObject;}
+    else if (stateInfo.prevObject != null) {current = stateInfo.prevObject;}
+    if (current == null || !stateInfo.mouse.inScene) {return;}
     var xScale = current.scale.x;
     var yScale = current.scale.y;
     var aspectRatio = xScale / yScale;
@@ -187,7 +187,7 @@ function onScroll(e) {
 // stringifies it, then downloads this data
 function downloadScene() {
     const imagesData = [];
-    images.forEach(img => {
+    stateInfo.images.forEach(img => {
         imagesData.push([img.material.map.source.data.currentSrc, img.position, img.scale]);
     });
     var imagesJSON = JSON.stringify(imagesData);
@@ -246,23 +246,23 @@ function addImage(img, position, scale) {
     else {
         image.position.set(0, 0, 0)
     }
-    images.push(image);
-    scene.add(image);
+    stateInfo.images.push(image);
+    stateInfo.scene.add(image);
 }
 
 function animate() {
 
     requestAnimationFrame( animate );
 
-    if (selectedObject != null && mouse.down) {
-        selectedObject.position.set(mouse.x + mouse.xOffset, 
-            mouse.y + mouse.yOffset);
+    if (stateInfo.selectedObject != null && stateInfo.mouse.down) {
+        stateInfo.selectedObject.position.set(stateInfo.mouse.x + stateInfo.mouse.xOffset, 
+            stateInfo.mouse.y + stateInfo.mouse.yOffset);
     }
 
-    if (mouse.y < screenHeight / -2 || mouse.y > screenHeight / 2) {
-        mouse.inScene = false;
+    if (stateInfo.mouse.y < stateInfo.frustum.height / -2 || stateInfo.mouse.y > stateInfo.frustum.height / 2) {
+        stateInfo.mouse.inScene = false;
     }
-    else {mouse.inScene = true;}
+    else {stateInfo.mouse.inScene = true;}
 
-    renderer.render( scene, camera );
+    stateInfo.renderer.render( stateInfo.scene, stateInfo.camera );
 };
